@@ -1,0 +1,81 @@
+🎲 YOLOv8 Dice Recognition — Google Colab Template
+
+# ============================
+# 🚀 Step 1: Setup Environment
+# ============================
+!pip install ultralytics==8.0.196  # YOLOv8 stable version
+from ultralytics import YOLO
+
+import torch
+print("✅ Torch version:", torch.__version__)
+print("✅ GPU available:", torch.cuda.is_available())
+
+# ============================
+# 📂 Step 2: Mount Google Drive (optional, for datasets/saving models)
+# ============================
+from google.colab import drive
+drive.mount('/content/drive')
+
+# Example: set your project folder
+PROJECT_PATH = "/content/drive/MyDrive/YOLO_Dice"
+
+# ============================
+# 📦 Step 3: Prepare Dataset
+# ============================
+# ⚠️ Your dataset must follow YOLO format:
+# dataset/
+#   ├── train/images
+#   ├── train/labels
+#   ├── val/images
+#   ├── val/labels
+#   └── data.yaml
+
+# If zipped, unzip like this:
+# !unzip /content/drive/MyDrive/dice_dataset.zip -d /content/dice_dataset
+
+path: /content/dice_dataset  # dataset root
+train: train/images
+val: val/images
+
+nc: 6  # number of classes (e.g., dice faces 1–6)
+names: ['one', 'two', 'three', 'four', 'five', 'six']
+
+# ============================
+# 🏋️ Step 4: Train YOLOv8 Model
+# ============================
+model = YOLO("yolov8n.pt")  # use yolov8n (nano) for fast training, can switch to yolov8s/m/l
+
+results = model.train(
+    data="/content/dice_dataset/data.yaml",  # update with your yaml path
+    epochs=50,
+    imgsz=640,
+    batch=16,
+    project="dice_yolo_runs",
+    name="yolov8n_dice",
+    device=0  # 0 = GPU, 'cpu' for CPU
+)
+
+# ============================
+# 📊 Step 5: Evaluate Model
+# ============================
+metrics = model.val()
+print(metrics)
+
+# ============================
+# 🔍 Step 6: Inference (Test on Images)
+# ============================
+# Replace with your test image
+results = model.predict(
+    source="/content/dice_dataset/test.jpg",
+    conf=0.5,
+    show=True
+)
+
+# Save results
+results[0].save(filename="/content/dice_prediction.jpg")
+
+# ============================
+# 💾 Step 7: Export Trained Model
+# ============================
+# Save best.pt to Google Drive for future use
+!cp /content/dice_yolo_runs/train/yolov8n_dice/weights/best.pt /content/drive/MyDrive/YOLO_Dice/
