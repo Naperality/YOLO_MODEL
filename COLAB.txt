@@ -55,28 +55,31 @@ results = model.train(
     device=0
 )
 
-
 # ============================
 # 📊 Step 5: Evaluate Model
 # ============================
 metrics = model.val()
-print(metrics)
+print("✅ Evaluation metrics:", metrics)
+
 
 # ============================
-# 🔍 Step 6: Inference (Test on Images)
+# 🔍 Step 6: Inference (Test on Sample Images)
 # ============================
-# Replace with your test image
+# You can test with images from your dataset or upload new ones
+TEST_IMAGE = f"{DATASET_PATH}/test/images/sample.jpg"  # change to one of your test images
+
 results = model.predict(
-    source="/content/dice_dataset/test.jpg",
+    source=TEST_IMAGE,
     conf=0.5,
     show=True
 )
 
-# Save results
+# Save prediction output
 results[0].save(filename="/content/dice_prediction.jpg")
 
 # ============================
 # 💾 Step 7: Export Trained Model
 # ============================
-# Save best.pt to Google Drive for future use
-!cp /content/dice_yolo_runs/train/yolov8n_dice/weights/best.pt /content/drive/MyDrive/YOLO_Dice/
+# Copy best weights to Google Drive
+!cp {PROJECT_PATH}/yolov8n_dice/weights/best.pt {PROJECT_PATH}/best.pt
+print("✅ Model saved to Google Drive:", PROJECT_PATH + "/best.pt")
