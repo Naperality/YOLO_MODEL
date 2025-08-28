@@ -83,3 +83,10 @@ results[0].save(filename="/content/dice_prediction.jpg")
 # Copy best weights to Google Drive
 !cp {PROJECT_PATH}/yolov8n_dice/weights/best.pt {PROJECT_PATH}/best.pt
 print("✅ Model saved to Google Drive:", PROJECT_PATH + "/best.pt")
+
+# ============================
+# 💾 Step 8: Export Trained Model in Different Format
+# ============================
+# Export your trained model to different formats:
+model.export(format="onnx")
+
